@@ -92,6 +92,8 @@ export function buildSchedule(
         ) {
           bestMatch = { tech, equip, start, end };
         }
+        }
+    }
 
         // Si aucune paire possible n signale et on passe au suivant
         if (bestMatch === null) {
@@ -110,19 +112,16 @@ export function buildSchedule(
           endTime: toHHMM(bestMatch.end),
           priority: sample.priority,
         });
-
-        planning.sort(
+    }
+    planning.sort(
           (a, b) => toMinutes(a.startTime) - toMinutes(b.startTime),
         );
-      }
+        return planning
     }
-  }
-
-  return planning;
-}
 
 
-function countConflicts(planning: PlanningEntry[]): number {
+
+export function countConflicts(planning: PlanningEntry[]): number {
   let conflicts = 0;
   // On compare chaque ligne avec toutes celles qui suivent (j commence à i + 1 pour ne pas compter deux fois le même conflit)
   for (let i = 0; i < planning.length; i++) {
@@ -147,7 +146,7 @@ function countConflicts(planning: PlanningEntry[]): number {
 }
 
 
-function computeMetrics(planning: PlanningEntry[]): Metrics {
+export function computeMetrics(planning: PlanningEntry[]): Metrics {
   //Attention si planning vide,  on divise par zéro
   if (planning.length === 0) {
     return { totalTime: 0, efficiency: 0, conflicts: 0 };
@@ -176,11 +175,6 @@ function computeMetrics(planning: PlanningEntry[]): Metrics {
     conflicts: countConflicts(planning),
   };
 }
-
-
-
-
-
 
 export function planifyLab(data: LabInput): LabOutput {
   const schedule = buildSchedule(data.samples, data.technicians, data.equipment);
